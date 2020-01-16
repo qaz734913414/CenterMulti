@@ -29,6 +29,7 @@ Object detection, 3D detection, and pose estimation using center point detection
 All models and details are available in > [**CenterNet MODEL_ZOO**](https://github.com/xingyizhou/CenterNet/blob/master/readme/MODEL_ZOO.md)  
 
 ![shoulder](images/shoulder.png)
+![defect](images/defect.png)
 
 ### 2.2 keypoint or pose
 
@@ -51,9 +52,15 @@ All models and details are available in > [**CenterNet MODEL_ZOO**](https://gith
 
 ### 2.3 model
 
-> [**centerface与shoulder模型**](https://pan.baidu.com/s/1ac4KiYdeTjruXiUsYu6HmA) 提取码: 33fj
+> [**centerface/shoulder/defect模型**](https://pan.baidu.com/s/1DzlvIZ3ujEzNLsU50UWLNw) 提取码: u3pq
+
+- **defect**: defect模型基于mobilenetv2训练，由于部分数据标定不准，所以结果会有偏差，建议只供pre-train.
 
 - **centerface**: 该版本的centerface是基于修改的centernet训练，训练数据参照widerface，其中对质量不好的face做了过滤，使其更适合人脸识别的工程应用，模型有两个，分别是3.5M和8.9M.
+
+```
+centerface的训练：例如修改lib/datasets/coco_hp.py里num_joints = 5;flip_idx = [[0, 1], [3, 4]]以及整个项目里17的关节点数全部置换成5，dets[39:51]这类全部换成dets[15:20]等
+```
 
 ## 3. TensorRT
 1. torch转onnx
@@ -71,6 +78,19 @@ python demo_tensorrt.py
 3. 检测框架支持的TensorRT
 
 > [**TensorRT C++**](https://github.com/CaoWGG/TensorRT-CenterNet) 
+
+
+```
+    #shoulder检测模型支持该框架加速（不需要DCNs），total runtime = 3.82147 ms
+    #在include/ctdetConfig.h里添加以下，然后cmake即可
+    constexpr static int input_w = 512 ;
+    constexpr static int input_h = 512 ;
+    constexpr static int channel = 3 ;
+    constexpr static int classNum = 1 ;
+    constexpr static float mean[]= {0.408, 0.447, 0.470};
+    constexpr static float std[] = {0.289, 0.274, 0.278};
+    constexpr static char *className[]= {(char*)"shoulder"};
+```
 
 ## Citation
 
